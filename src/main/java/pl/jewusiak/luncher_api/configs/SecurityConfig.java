@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -47,15 +46,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.csrf(AbstractHttpConfigurer::disable)
-                           .authorizeHttpRequests(matcherRegistry ->
-                                   matcherRegistry.requestMatchers("/auth/**", "/error", "/docs/**").permitAll()
-                                                  .anyRequest().authenticated())
-                           .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-                           .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                           .authenticationProvider(authenticationProvider())
-
-                           .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                           .build();
+                .authorizeHttpRequests(matcherRegistry ->
+                        matcherRegistry.requestMatchers("/auth/**", "/error", "/docs/**").permitAll()
+                                .anyRequest().authenticated())
+                .oauth2Login(customizer -> {
+                    customizer.authorizationEndpoint(c -> c.baseUri("/auth/oauth2/login"));
+                    customizer.redirectionEndpoint(c -> c.baseUri("/auth/oauth2/callback"));
+                    customizer.defaultSuccessUrl("/auth/oauth2/loginsuccess");
+                })
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
 

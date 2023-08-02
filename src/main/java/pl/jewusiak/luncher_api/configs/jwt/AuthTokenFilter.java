@@ -1,5 +1,6 @@
 package pl.jewusiak.luncher_api.configs.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +38,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 if (jwt == null)
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Please provide auth token.");
             }
-            String email = jwtUtils.getUsernameFromAccessToken(jwt);
+            String email;
+            try {
+                email = jwtUtils.getUsernameFromAccessToken(jwt);
+            } catch (ExpiredJwtException e) {
+                response.sendError(460);
+                return;
+            }
             User user = usersService.getUserByEmail(email);
             if (!user.isEnabled()) throw new UserAccountNotConfirmedException();
             if (user.isLocked()) throw new UserAccountLockedException();

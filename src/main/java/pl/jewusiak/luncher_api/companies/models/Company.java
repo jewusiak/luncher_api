@@ -44,3 +44,4 @@ public class Company {
     private List<User> managingUsers;
 
 }
+

@@ -65,11 +65,11 @@ public class JwtUtils {
      */
     public String getUsernameFromAccessToken(String token) {
         return Jwts.parserBuilder()
-                   .setSigningKey(getAccessKey())
-                   .build()
-                   .parseClaimsJws(token)
-                   .getBody()
-                   .getSubject();
+                .setSigningKey(getAccessKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
 
     }
 

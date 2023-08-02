@@ -1,0 +1,5 @@
+FROM openjdk:17
+LABEL authors="Grzegorz Jewusiak"
+COPY target/luncher_api-0.0.1-SNAPSHOT.jar app.jar
+
+ENTRYPOINT ["java","-jar","/app.jar"]

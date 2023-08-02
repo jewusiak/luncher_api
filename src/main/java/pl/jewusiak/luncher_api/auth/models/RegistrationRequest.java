@@ -12,6 +12,5 @@ public class RegistrationRequest {
     @NotBlank
     @Email
     private String email;
-    @NotBlank
     private String password;
 }

@@ -3,6 +3,8 @@ package pl.jewusiak.luncher_api.users.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,13 +28,15 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
     @Email
+    @NotBlank
     private String email;
     private String fullName;
     private String phoneNumber;
-    private String password;
+    private String password; // if password is null, then only auth is via social login
     private boolean isEnabled; //not enabled means e.g. email not yet confirmed
     private boolean isLocked; //locked by admin
     @Enumerated(EnumType.STRING)
+    @NotNull
     private URole role;
 
     @ManyToOne

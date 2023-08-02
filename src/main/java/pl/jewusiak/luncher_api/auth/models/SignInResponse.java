@@ -10,6 +10,6 @@ import pl.jewusiak.luncher_api.users.models.UserDto;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SignInResponse {
-    private JwtResponse jwtResponse;
-    private UserDto userDto;
+    private JwtResponse tokens;
+    private UserDto user;
 }
